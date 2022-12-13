@@ -113,3 +113,42 @@ def a_star(initial_state, get_actions, act, get_cost, get_heuristic, is_goal):
     
     print(f'time for search: {time.time() - start_time}')
     return None, None
+
+def alpha_beta_search(game, state):
+    player = game.to_move(state)
+    alpha = float('-inf')
+    beta = float('inf')
+    value, move = max_value(game, state, player, alpha, beta)
+    return move
+
+def max_value(game, state, player, alpha, beta):
+    if game.is_terminal(state):
+        return (game.utility(state, player), None)
+    
+    value = float('-inf')
+    for action in game.actions(state):
+        value2, action2 = min_value(game, game.result(state, action), player, alpha, beta)
+        if value2 > value:
+            value, move = value2, action2
+            # pruning start ---
+            alpha = max(alpha, value)
+        if value >= beta:
+            return (value, move)
+            # pruning end   ---
+    return (value, move)
+
+def min_value(game, state, player, alpha, beta):
+    if game.is_terminal(state):
+        return (game.utility(state, player), None)
+    
+    value = float('inf')
+    for action in game.actions(state):
+        value2, action2 = min_value(game, game.result(state, action), player, alpha, beta)
+        if value2 < value:
+            value, move = value2, action2
+            # pruning start ---
+            beta = min(beta, value)
+        if value <= alpha:
+            return (value, move)
+            # pruning end   ---
+    return (value, move)
