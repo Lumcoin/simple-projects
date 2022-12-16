@@ -129,12 +129,13 @@ def max_value(game, state, player, alpha, beta):
     for action in game.actions(state):
         value2, action2 = min_value(game, game.result(state, action), player, alpha, beta)
         if value2 > value:
-            value, move = value2, action2
+            value, move = value2, action
             # pruning start ---
             alpha = max(alpha, value)
         if value >= beta:
-            return (value, move)
+            return (value, action)
             # pruning end   ---
+
     return (value, move)
 
 def min_value(game, state, player, alpha, beta):
@@ -143,12 +144,13 @@ def min_value(game, state, player, alpha, beta):
     
     value = float('inf')
     for action in game.actions(state):
-        value2, action2 = min_value(game, game.result(state, action), player, alpha, beta)
+        value2, action2 = max_value(game, game.result(state, action), player, alpha, beta)
         if value2 < value:
-            value, move = value2, action2
+            value, move = value2, action
             # pruning start ---
             beta = min(beta, value)
         if value <= alpha:
-            return (value, move)
+            return (value, action)
             # pruning end   ---
+
     return (value, move)
